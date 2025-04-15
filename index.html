@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forschungsmethoden Gruppe C - Sitzung 3: Stichprobenplan</title>
+    <style>
+        /* --- Root Variables and Basic Styles --- */
+        :root {
+            --uni-hohenheim-blue: #003560;
+            --uni-hohenheim-lightblue: #0073a0;
+            --text-color: #333;
+            --heading-color: var(--uni-hohenheim-blue);
+            --background-color: #f8f9fa;
+            --box-background: #ffffff;
+            --border-color: #dee2e6;
+            --accent-color: #e85f3e; /* Hohenheim Orange/Red accent */
+            --placeholder-bg: #e9ecef; /* Used for viz backgrounds */
+            --placeholder-border: #ced4da;
+            --method-box-bg: #f0f8ff;
+            --method-box-border: #cce5ff;
+            --animation-duration-base: 0.6s; /* Base duration */
+            --animation-duration-slow: 1s;
+            --animation-duration-fast: 0.4s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrollbars from animations */
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            background-color: var(--box-background);
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- Header Styles --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--uni-hohenheim-blue);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        header .course-info h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: var(--heading-color);
+        }
+        header .course-info p {
+            margin: 5px 0 0;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        header .uni-logo img {
+            max-height: 60px;
+            width: auto;
+        }
+
+        /* --- Headings and Text Styles --- */
+        h2, h3 {
+            color: var(--heading-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+         h3 {
+            border-bottom: none;
+            margin-top: 30px;
+            font-size: 1.3em;
+         }
+         h4 {
+            color: var(--uni-hohenheim-lightblue);
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+         }
+
+        p, ul, li {
+            margin-bottom: 1em;
+        }
+        ul { padding-left: 25px; }
+        li::marker { color: var(--uni-hohenheim-lightblue); }
+        strong { color: var(--uni-hohenheim-blue); }
+
+        blockquote {
+            border-left: 4px solid var(--uni-hohenheim-lightblue);
+            padding-left: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #555;
+        }
+        blockquote footer {
+            font-style: normal;
+            font-size: 0.9em;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        /* --- Box Styles --- */
+        .task-box, .info-box, .method-specific-box {
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+            border: 1px solid;
+            border-left-width: 5px;
+        }
+        .task-box {
+            background-color: #eef7ff;
+            border-color: #bce0fd;
+            border-left-color: var(--uni-hohenheim-lightblue);
+        }
+        .task-box h2 { margin-top: 0; border-bottom: none; color: var(--uni-hohenheim-blue); }
+
+        .info-box {
+            background-color: #fffadd;
+            border-color: #f1c40f;
+            border-left-color: #f1c40f;
+            padding: 15px;
+        }
+        .info-box strong { color: #c89c0c; }
+
+        .method-specific-box {
+            background-color: var(--method-box-bg);
+            border-color: var(--method-box-border);
+            padding: 15px 20px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+         .method-specific-box h4 {
+            margin-top: 5px;
+            border-bottom: 1px dotted var(--uni-hohenheim-lightblue);
+            padding-bottom: 5px;
+         }
+
+        /* --- Table Styles --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95em; /* Slightly smaller table font */
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f1f3f5;
+            color: var(--heading-color);
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+
+        /* --- Footer Styles --- */
+        footer.page-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        /* --- Base Animation: FadeInUp --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+         @keyframes fadeInScaleUp {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes drawLine {
+             to { stroke-dashoffset: 0; }
+        }
+        @keyframes popIn {
+             0% { transform: scale(0.5); opacity: 0; }
+             70% { transform: scale(1.1); opacity: 1; }
+             100% { transform: scale(1); opacity: 1; }
+        }
+
+
+        /* --- Scroll Trigger Base Style --- */
+        /* Elements start hidden and will be animated by adding 'is-visible' class via JS */
+        .animated-on-scroll {
+            opacity: 0;
+            transition: opacity var(--animation-duration-base) ease-out;
+        }
+        .animated-on-scroll.is-visible {
+            opacity: 1;
+            animation: fadeInUp var(--animation-duration-base) ease-out forwards;
+        }
+
+
+        /* --- ORIGINAL Sampling Flow Animation (Now Triggered by Scroll) --- */
+        .sampling-flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            padding: 20px 10px;
+            margin: 30px 0;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #f5f7fa, #e9ecef);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Children are animated individually */
+        .sampling-flow-container .stage,
+        .sampling-flow-container .process-step {
+            opacity: 0; /* Start hidden */
+            transition: opacity var(--animation-duration-base) ease-out, transform var(--animation-duration-base) ease-out;
+        }
+
+        /* Apply animation when 'is-visible' class is added by JS */
+        .sampling-flow-container .stage.is-visible,
+        .sampling-flow-container .process-step.is-visible {
+            opacity: 1;
+            animation: fadeInUp var(--animation-duration-base) ease-out forwards;
+        }
+
+        /* Optional: Add staggered delay using transition-delay if needed,
+           though IntersectionObserver observing each element often suffices */
+        .sampling-flow-container .stage.theoretical-gg.is-visible { transition-delay: 0s; }
+        .sampling-flow-container .process-step.step1.is-visible { transition-delay: 0.2s; }
+        .sampling-flow-container .stage.operational-gg.is-visible { transition-delay: 0.4s; }
+        .sampling-flow-container .process-step.step2.is-visible { transition-delay: 0.6s; }
+        .sampling-flow-container .stage.realized-sample.is-visible { transition-delay: 0.8s; }
+
+
+        .sampling-flow-container .stage {
+            background-color: var(--box-background);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            flex: 1;
+            margin: 0 5px;
+            min-height: 180px; /* Ensure enough height */
+        }
+        .sampling-flow-container .stage:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-color: var(--uni-hohenheim-lightblue);
+            cursor: default; /* No action on hover */
+        }
+        .sampling-flow-container .stage.theoretical-gg { max-width: 28%; }
+        .sampling-flow-container .stage.operational-gg { max-width: 28%; }
+        .sampling-flow-container .stage.realized-sample { max-width: 24%; }
+
+        .sampling-flow-container .stage h5 {
+            margin: 0 0 10px 0; font-size: 1.05em; color: var(--heading-color);
+        }
+        .sampling-flow-container .stage p {
+            font-size: 0.85em; color: #555; margin: 5px 0; line-height: 1.5;
+        }
+         .sampling-flow-container .stage em {
+            font-style: normal; font-weight: 600; color: var(--uni-hohenheim-blue);
+         }
+
+        .sampling-flow-container .process-step {
+            flex-basis: 10%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; position: relative; padding: 5px; min-width: 80px;
+        }
+        .sampling-flow-container .process-step .arrow-text {
+            font-size: 0.8em; color: #6c757d; margin-bottom: 25px; display: block; font-style: italic;
+        }
+        /* CSS Arrow Head */
+        .sampling-flow-container .process-step::after {
+            content: ''; position: absolute; bottom: 45%; left: 50%;
+            transform: translateX(-50%); width: 0; height: 0;
+            border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+            border-left: 15px solid var(--uni-hohenheim-lightblue);
+        }
+        /* Specific arrow text */
+        .sampling-flow-container .process-step.step1 .arrow-text::before { content: "Einschränkung durch Design/Ressourcen"; display: block; }
+        .sampling-flow-container .process-step.step2 .arrow-text::before { content: "Stichproben-\A verfahren"; white-space: pre; display: block; }
+
+         @media (min-width: 769px) {
+             .sampling-flow-container .process-step.step1::after,
+             .sampling-flow-container .process-step.step2::after { bottom: 35%; } /* Adjusted position */
+         }
+
+        /* --- NEW VISUALIZATION STYLES --- */
+
+        /* General Container for Visualizations */
+        .visualization-container {
+            background-color: var(--placeholder-bg);
+            border: 1px solid var(--placeholder-border);
+            border-radius: 6px;
+            padding: 25px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 200px; /* Adjust as needed */
+            overflow: hidden; /* Contain animations */
+            position: relative; /* For absolute positioning inside */
+        }
+
+        .visualization-title {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* --- Viz 1: GG to Sample --- */
+        .gg-to-sample-viz {
+            width: 100%;
+            max-width: 400px; /* Control max size */
+            height: 150px; /* Fixed height for SVG */
+            position: relative; /* For positioning elements */
+        }
+        .gg-to-sample-viz svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible; /* Allow elements outside viewbox initially if needed */
+        }
+
+        .gg-to-sample-viz .population-circle {
+            fill: var(--uni-hohenheim-lightblue);
+            opacity: 0.3;
+            transition: transform var(--animation-duration-base) ease-out;
+        }
+        .gg-to-sample-viz .sample-circle {
+            fill: var(--uni-hohenheim-blue);
+            stroke: var(--box-background);
+            stroke-width: 2;
+            opacity: 0; /* Initially hidden */
+            transform-origin: center;
+            transition: opacity var(--animation-duration-fast) ease-in var(--animation-duration-base), transform var(--animation-duration-fast) ease-in var(--animation-duration-base);
+        }
+        .gg-to-sample-viz text {
+            font-family: inherit;
+            font-size: 14px;
+            fill: var(--text-color);
+            text-anchor: middle;
+            opacity: 0; /* Initially hidden */
+            transition: opacity var(--animation-duration-fast) ease-in;
+        }
+        .gg-to-sample-viz .arrow {
+            stroke: var(--accent-color);
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+            stroke-dasharray: 100; /* For drawing animation */
+            stroke-dashoffset: 100;
+            opacity: 0; /* Initially hidden */
+        }
+
+        /* Animation Trigger for Viz 1 */
+        .gg-to-sample-viz.is-visible .population-circle {
+             /* Maybe add subtle scale/fade effect */
+        }
+        .gg-to-sample-viz.is-visible .sample-circle {
+            opacity: 1;
+            transform: scale(1);
+        }
+         .gg-to-sample-viz.is-visible text {
+             opacity: 1;
+             transition-delay: var(--animation-duration-base); /* Appear after circles */
+         }
+         .gg-to-sample-viz.is-visible .arrow {
+            opacity: 1;
+            animation: drawLine var(--animation-duration-base) ease-out forwards;
+            animation-delay: calc(var(--animation-duration-base) * 0.5); /* Start drawing after half */
+         }
+
+
+        /* --- Viz 2: Content Analysis Funnel --- */
+        .content-analysis-funnel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        .content-analysis-funnel .funnel-stage {
+            background-color: var(--box-background);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            margin-bottom: 10px;
+            text-align: center;
+            border-radius: 4px;
+            width: 100%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            opacity: 0; /* Hidden initially */
+            transform: translateY(15px);
+            transition: opacity var(--animation-duration-fast) ease-out, transform var(--animation-duration-fast) ease-out;
+        }
+         .content-analysis-funnel .funnel-stage:not(:last-child)::after { /* Arrow connector */
+             content: '↓';
+             display: block;
+             color: var(--uni-hohenheim-lightblue);
+             font-size: 1.5em;
+             margin-top: -5px;
+         }
+
+        .content-analysis-funnel .stage-1 { width: 100%; transition-delay: 0s; }
+        .content-analysis-funnel .stage-2 { width: 85%; transition-delay: 0.2s; }
+        .content-analysis-funnel .stage-3 { width: 70%; transition-delay: 0.4s; }
+        .content-analysis-funnel .stage-4 { width: 55%; background-color: var(--method-box-bg); border-color: var(--method-box-border); font-weight: bold; transition-delay: 0.6s; }
+
+        .content-analysis-funnel .funnel-stage p { margin: 0; font-size: 0.85em; }
+
+        /* Animation Trigger for Viz 2 */
+        .content-analysis-funnel.is-visible .funnel-stage {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Viz 3: Experimental Design --- */
+        .experiment-design-viz {
+            display: flex;
+            align-items: flex-start; /* Align tops */
+            justify-content: space-around;
+            width: 100%;
+            max-width: 550px;
+        }
+        .experiment-design-viz .participant-pool,
+        .experiment-design-viz .randomization,
+        .experiment-design-viz .groups {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .experiment-design-viz .participant-pool { flex-basis: 25%; }
+        .experiment-design-viz .randomization { flex-basis: 20%; justify-content: center; }
+        .experiment-design-viz .groups { flex-basis: 50%; display: flex; flex-direction: row; justify-content: space-around; align-items: stretch; }
+
+        .experiment-design-viz .pool-box,
+        .experiment-design-viz .group-box {
+            border: 2px solid var(--uni-hohenheim-lightblue);
+            background-color: var(--method-box-bg);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            opacity: 0; /* Hidden initially */
+            transform: scale(0.8);
+            transition: opacity var(--animation-duration-fast) ease-out, transform var(--animation-duration-fast) ease-out;
+            min-width: 80px;
+        }
+         .experiment-design-viz .group-box {
+             border-style: dashed;
+             border-color: var(--uni-hohenheim-blue);
+             background-color: #fff;
+             margin: 0 5px; /* Spacing between groups */
+         }
+
+        .experiment-design-viz .label {
+             font-size: 0.85em; color: var(--heading-color); margin-bottom: 5px; font-weight: 500;
+        }
+         .experiment-design-viz .arrow-symbol {
+            font-size: 2em;
+            color: var(--accent-color);
+            margin: 10px 0;
+            opacity: 0;
+            transform: scale(0.5);
+             transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+             transition-delay: 0.3s; /* Delay arrow appearance */
+             font-weight: bold;
+         }
+
+        /* Animation Trigger for Viz 3 */
+        .experiment-design-viz.is-visible .pool-box { opacity: 1; transform: scale(1); transition-delay: 0s; }
+        .experiment-design-viz.is-visible .arrow-symbol { opacity: 1; transform: scale(1); transition-delay: 0.2s; } /* Arrow appears after pool */
+        .experiment-design-viz.is-visible .group-box { opacity: 1; transform: scale(1); }
+        .experiment-design-viz.is-visible .group-box.group-1 { transition-delay: 0.4s; }
+        .experiment-design-viz.is-visible .group-box.group-2 { transition-delay: 0.6s; }
+        .experiment-design-viz.is-visible .group-box.group-3 { transition-delay: 0.8s; } /* If 3 groups exist */
+
+
+        /* --- Viz 4: Survey Sampling Flowchart --- */
+        .survey-sampling-viz {
+             width: 100%;
+             max-width: 600px;
+             text-align: center;
+        }
+        .survey-sampling-viz .flow-node {
+             background-color: var(--box-background);
+             border: 1px solid var(--border-color);
+             padding: 8px 12px;
+             border-radius: 4px;
+             margin: 5px auto; /* Center nodes */
+             display: inline-block; /* Allow centering */
+             opacity: 0; /* Hidden initially */
+             transform: translateY(10px);
+             transition: all var(--animation-duration-fast) ease-out;
+             font-size: 0.9em;
+        }
+        .survey-sampling-viz .flow-node.main-branch {
+             background-color: var(--method-box-bg);
+             border-color: var(--method-box-border);
+             font-weight: bold;
+        }
+        .survey-sampling-viz .flow-level {
+             margin-top: 15px;
+             position: relative;
+        }
+         .survey-sampling-viz .flow-level.level-2 { /* Branches */
+             display: flex;
+             justify-content: space-around;
+             margin-top: 25px; /* More space for lines */
+         }
+         .survey-sampling-viz .branch {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             flex-basis: 45%;
+         }
+         .survey-sampling-viz .flow-connector { /* Simple text connector */
+             display: block;
+             margin: 2px 0;
+             color: var(--uni-hohenheim-lightblue);
+             opacity: 0;
+             transition: opacity 0.3s ease-out;
+             transition-delay: 0.2s; /* Delay connector appearance */
+         }
+
+        /* Animation Trigger for Viz 4 */
+        .survey-sampling-viz.is-visible .flow-node,
+        .survey-sampling-viz.is-visible .flow-connector {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Staggering */
+        .survey-sampling-viz.is-visible .level-1 .flow-node { transition-delay: 0s; }
+        .survey-sampling-viz.is-visible .level-1 .flow-connector { transition-delay: 0.2s; }
+        .survey-sampling-viz.is-visible .level-2 .main-branch { transition-delay: 0.4s; }
+        .survey-sampling-viz.is-visible .level-2 .flow-connector { transition-delay: 0.6s; }
+        .survey-sampling-viz.is-visible .level-3 .flow-node {
+            /* Stagger sub-items */
+        }
+        .survey-sampling-viz.is-visible .branch-probability .flow-node:nth-child(1) { transition-delay: 0.8s; }
+        .survey-sampling-viz.is-visible .branch-probability .flow-node:nth-child(2) { transition-delay: 1.0s; }
+        .survey-sampling-viz.is-visible .branch-probability .flow-node:nth-child(3) { transition-delay: 1.2s; }
+
+        .survey-sampling-viz.is-visible .branch-nonprobability .flow-node:nth-child(1) { transition-delay: 0.8s; }
+        .survey-sampling-viz.is-visible .branch-nonprobability .flow-node:nth-child(2) { transition-delay: 1.0s; }
+        .survey-sampling-viz.is-visible .branch-nonprobability .flow-node:nth-child(3) { transition-delay: 1.2s; }
+
+
+        /* --- Responsive adjustments --- */
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            header { flex-direction: column; align-items: flex-start; }
+            header .uni-logo { margin-top: 15px; align-self: center; }
+
+            /* Adjust sampling flow for smaller screens */
+            .sampling-flow-container { flex-direction: column; align-items: center; }
+            .sampling-flow-container .stage { max-width: 90%; margin: 10px 0; }
+            .sampling-flow-container .process-step {
+                flex-basis: auto; width: 60px; /* Smaller width */ min-width: 0;
+                transform: rotate(90deg); margin: 15px 0; min-height: 80px; /* Adjust height for rotated arrow */
+            }
+            .sampling-flow-container .process-step .arrow-text {
+                transform: rotate(-90deg); /* Counter-rotate text */
+                display: inline-block; /* Allow transform */
+                max-width: 150px; white-space: normal; padding-bottom: 5px; /* Adjust spacing */
+                margin-bottom: 0; /* Remove original margin */
+                position: absolute; top: -30px; /* Position text above rotated arrow */ left: 50%; transform: translateX(-50%) rotate(-90deg);
+            }
+            .sampling-flow-container .process-step::after { /* Adjust arrow for vertical */
+                 border-left: 10px solid transparent; border-right: 10px solid transparent;
+                 border-top: 15px solid var(--uni-hohenheim-lightblue); /* Points down */
+                 bottom: auto; top: 55%; /* Position arrow head */ left: 50%; transform: translateX(-50%);
+            }
+
+             /* Adjust visualizations for smaller screens if necessary */
+            .visualization-container { padding: 15px; min-height: 180px; }
+            .gg-to-sample-viz { height: 120px; }
+            .gg-to-sample-viz text { font-size: 12px; }
+
+            .experiment-design-viz { flex-direction: column; align-items: center; }
+            .experiment-design-viz .randomization { margin: 15px 0; }
+            .experiment-design-viz .groups { width: 100%; margin-top: 10px; }
+
+            .survey-sampling-viz .flow-level.level-2 { flex-direction: column; align-items: center; }
+            .survey-sampling-viz .branch { flex-basis: 100%; width: 90%; margin-bottom: 15px; }
+        }
+
+         /* Add a class for elements animated specifically */
+         .viz-element {
+             opacity: 0; /* Common starting state for elements within visualizations */
+         }
+         .is-visible .viz-element {
+             opacity: 1; /* Common ending state */
+             /* Individual animations/transitions defined per visualization */
+         }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <div class="course-info">
+                <h1>Forschungsmethoden C</h1>
+                <p>Universität Hohenheim | Sommersemester 2025<br>
+                   Andreas Reich | 3. Sitzung: Stichprobenplan</p>
+            </div>
+            <div class="uni-logo">
+                <!-- Important: Make sure logo.png is in the same directory or provide the correct path -->
+                <img src="logo.png" alt="Logo Universität Hohenheim">
+            </div>
+        </header>
+
+        <main>
+            <section id="introduction">
+                <h2>Warum Stichproben? Die Basis empirischer Forschung</h2>
+                <p>Herzlich willkommen zur dritten Sitzung unseres Methodenprojekts! Heute widmen wir uns einem fundamentalen Schritt jeder empirischen Untersuchung: der Planung der <strong>Stichprobenziehung</strong>.</p>
+                <p>Selten ist es möglich oder sinnvoll, alle Einheiten (Personen, Medieninhalte, Organisationen etc.), über die wir eine Aussage treffen möchten – die sogenannte <strong>Grundgesamtheit</strong> – vollständig zu untersuchen. Eine Vollerhebung wäre oft zu teuer, zu zeitaufwändig oder schlichtweg unmöglich.</p>
+                <p>Deshalb wählen wir einen Teil dieser Grundgesamtheit aus: die <strong>Stichprobe</strong>. Von den Ergebnissen dieser Stichprobe schließen wir dann auf die Grundgesamtheit zurück (Repräsentationsschluss).</p>
+                <blockquote>
+                    "Die Ziehung einer Stichprobe ist [...] aus Gründen der Sparsamkeit (Zeit, Geld, Arbeitsaufwand) notwendig [...]. Die Genauigkeit der Ergebnisse ist bei Stichprobenerhebungen häufig höher als bei Vollerhebungen, weil die Datenerhebung präziser und die Auswertung intensiver sein kann."
+                    <footer>Kromrey, 2009, S. 253</footer>
+                </blockquote>
+
+                <!-- Replaced Placeholder 1: GG to Sample Visualization -->
+                <div class="visualization-container animated-on-scroll">
+                    <div class="visualization-title">Von der Grundgesamtheit zur Stichprobe</div>
+                    <div class="gg-to-sample-viz">
+                        <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
+                             <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                  <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-color)" />
+                                </marker>
+                              </defs>
+                            <!-- Population -->
+                            <circle class="population-circle viz-element" cx="0" cy="75" r="60"/>
+                            <text class="viz-element" x="0" y="158">Grundgesamtheit (GG)</text>
+                            <!-- Arrow -->
+                            <line class="arrow viz-element" x1="190" y1="100" x2="190" y2="100" />
+                            <text class="viz-element" x="200" y="60" font-size="12" fill="var(--accent-color)">Auswahl</text>
+                            <!-- Sample -->
+                            <circle class="sample-circle viz-element" cx="430" cy="127" r="30" transform="scale(0.5)" transform-origin="300 75"/>
+                            <text class="viz-element" x="316" y="140">Stichprobe</text>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <section id="hypothesis-recap">
+                <h2>Kurzer Rückblick: Hypothesen und ihre Bedeutung für die Stichprobe</h2>
+                <p>Die Art unserer Hypothesen beeinflusst, wie wir unsere Stichprobe planen müssen. Erinnern wir uns an die wichtigsten Typen:</p>
+                 <!-- Hypothesis Table remains unchanged -->
+                 <table>
+                    <thead>
+                        <tr>
+                            <th>Art der Hypothese</th>
+                            <th>Beschreibung</th>
+                            <th>Beispiel</th>
+                            <th>Implikation für Stichprobe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Unterschiedshypothese</strong></td>
+                            <td>Annahme über Unterschiede zwischen zwei oder mehr Gruppen bzgl. eines Merkmals.</td>
+                            <td>Frauen bauen stärkere parasoziale Beziehungen auf als Männer.</td>
+                            <td>Stichprobe muss ausreichend große Fallzahlen für <em>jede</em> zu vergleichende Gruppe enthalten.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zusammenhangshypothese</strong></td>
+                            <td>Annahme über einen Zusammenhang (z.B. "je... desto...") zwischen zwei oder mehr Variablen.</td>
+                            <td>Je mehr Freizeit man hat, desto mehr Zeit verbringt man auf YouTube.</td>
+                            <td>Stichprobe muss genügend <em>Varianz</em> in den untersuchten Variablen aufweisen (z.B. Personen mit viel UND wenig Freizeit).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Veränderungshypothese</strong></td>
+                            <td>Annahme über die Veränderung eines Merkmals über die Zeit oder durch eine Intervention.</td>
+                            <td>Regelmäßiges Training verbessert die Stimmung.</td>
+                            <td>Benötigt oft Messungen zu mehreren Zeitpunkten bei denselben Personen (Längsschnitt) oder Experimental-/Kontrollgruppen.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gerichtet vs. Ungerichtet</strong></td>
+                            <td>Gibt die Hypothese die Richtung des Unterschieds/Zusammenhangs an oder nur dessen Existenz?</td>
+                            <td>Gerichtet: Siehe oben. Ungerichtet: Männer und Frauen unterscheiden sich in der Stärke ihrer parasozialen Beziehungen.</td>
+                            <td>Beeinflusst eher die statistische Testung, weniger die Planung.</td>
+                        </tr>
+                        <tr>
+                             <td><strong>Spezifisch vs. Unspezifisch</strong></td>
+                            <td>Macht die Hypothese eine Aussage über die Größe des Unterschieds oder die Stärke des Zusammenhangs?</td>
+                             <td>Spezifisch: Der Unterschied beträgt mindestens X Punkte. Unspezifisch: Es gibt einen Unterschied.</td>
+                             <td>Spezifische Hypothesen erfordern oft größere Stichproben (Poweranalyse).</td>
+                        </tr>
+                    </tbody>
+                </table>
+                 <div class="info-box">
+                    <strong>Hinweis:</strong> Auch wenn Zusammenhangs- und Unterschiedshypothesen oft ineinander umformuliert werden können, sind sie nicht identisch und haben teils unterschiedliche Anforderungen an die Stichprobenzusammensetzung!
+                 </div>
+            </section>
+
+            <section id="task">
+                 <div class="task-box">
+                    <h2>Aufgabe 5: Entwicklung eines Stichprobenplans</h2>
+                    <p>In dieser Aufgabe sollt ihr in eurer Arbeitsgruppe einen detaillierten Plan für die Stichprobenziehung eures Forschungsprojekts entwickeln.</p>
+                    <p><strong>Ziel:</strong> Aus einer sinnvoll definierten (und für euer Projekt realistisch untersuchbaren) Grundgesamtheit im Rahmen eurer Ressourcen eine methodisch saubere Stichprobenziehung zu planen.</p>
+                    <p><strong>Wichtig:</strong> Es geht <em>nicht</em> darum, eine deutschlandweit bevölkerungsrepräsentative Stichprobe zu erheben, sondern eine für eure spezifische Fragestellung und euer Forschungsdesign geeignete Stichprobe!</p>
+                    <h3>Teilaufgaben:</h3>
+                    <ol>
+                        <li><strong>Präzise Definition der Grundgesamtheit (GG):</strong> Über wen oder was wollt ihr mit eurer Studie eine Aussage treffen? Definiert die <em>theoretisch ideale</em> GG und leitet daraus die <em>operationalisierbare</em> GG für eure Studie ab (siehe unten).</li>
+                        <li><strong>Präzise Definition und Größe der Stichprobe:</strong> Wen oder was werdet ihr tatsächlich untersuchen? Wie groß soll eure Stichprobe sein (und warum)?</li>
+                        <li><strong>Ausarbeitung des Stichprobenplans:</strong> Beschreibt detailliert, wie ihr vorgehen werdet, um die Untersuchungseinheiten für eure Stichprobe aus der operationalen GG auszuwählen. Begründet eure Wahl des Verfahrens (z.B. Zufallsauswahl, bewusste Auswahl, Convenience Sampling) und diskutiert dessen Vor- und Nachteile für euer Projekt. Bei Experimenten: Wie stellt ihr die Randomisierung (zufällige Zuweisung zu Bedingungen) sicher?</li>
+                    </ol>
+                    <h3>Abgabe:</h3>
+                     <p>Erstellt eine <strong>Text-Dokumentation</strong> (ca. 3-4 Seiten, wissenschaftlicher Stil) und eine <strong>Präsentation</strong>, die euren Stichprobenplan detailliert darstellt. Beachtet dabei die genannten Teilaufgaben und legt einen Schwerpunkt auf die Begründung eurer Entscheidungen sowie die Diskussion von Vor- und Nachteilen.</p>
+                     <p><strong>Hinweis:</strong> Ihr sollt den Plan entwickeln, aber die eigentliche Stichprobenziehung noch <em>nicht</em> durchführen!</p>
+                 </div>
+            </section>
+
+            <section id="guidance">
+                <h2>Hinweise und Hilfestellungen zur Planung</h2>
+
+                <h3>Von der Theorie zur Praxis: Grundgesamtheit und Stichprobe</h3>
+                <p>Der Weg von der theoretischen Idee zur tatsächlich untersuchten Stichprobe erfolgt oft in Schritten. Die folgende Visualisierung zeigt diesen Prozess beispielhaft:</p>
+
+                <!-- ORIGINAL Sampling Flow Visualization (now scroll-triggered) -->
+                <div class="sampling-flow-container">
+                     <!-- Add animated-on-scroll to children for JS observer -->
+                    <div class="stage theoretical-gg animated-on-scroll">
+                        <h5>Theoretisch optimale GG</h5>
+                        <p>Die Menge aller Einheiten, über die die Theorie eine Aussage macht.</p>
+                        <p><em>Bsp: Alle jungen Erwachsenen (18-29) in DE, die regelmäßig Serien schauen.</em></p>
+                    </div>
+                    <div class="process-step step1 animated-on-scroll">
+                        <span class="arrow-text"></span>
+                    </div>
+                    <div class="stage operational-gg animated-on-scroll">
+                        <h5>Operationale GG</h5>
+                        <p>Die durch das Forschungsdesign und Ressourcen praktisch erreichbare Teilmenge der theor. GG.</p>
+                        <p><em>Bsp (Online-FB): Deutschsprachige Bev. (18-29) mit Internetzugang, die auf Online-Fragebogen zugreifen können & regelmäßig Serien schauen.</em></p>
+                    </div>
+                     <div class="process-step step2 animated-on-scroll">
+                        <span class="arrow-text"></span>
+                    </div>
+                    <div class="stage realized-sample animated-on-scroll">
+                        <h5>Realisierte Stichprobe</h5>
+                        <p>Die Einheiten, die tatsächlich untersucht wurden.</p>
+                        <p><em>Bsp: N=700 Personen, die den Online-FB vollständig abgeschlossen haben.</em></p>
+                    </div>
+                </div>
+                 <!-- END: Sampling Flow Visualization -->
+
+
+                <p><strong>Vorgehen:</strong></p>
+                 <!-- Step list remains unchanged -->
+                <ul>
+                    <li><strong>Schritt 1: Theoretische Grundgesamtheit definieren.</strong> Wer ist aus Sicht eurer Theorie und Forschungsfrage relevant? Seid präzise (z.B. nicht nur "Studierende", sondern "Studierende der Uni Hohenheim im Bachelor im Sommersemester 2025").</li>
+                    <li><strong>Schritt 2: Operationale Grundgesamtheit festlegen.</strong> Welche Einschränkungen ergeben sich durch euer Forschungsdesign und praktische Rahmenbedingungen? Wer ist tatsächlich erreichbar? (z.B. nur über Online-Kanäle erreichbare Personen, nur Personen auf einer bestimmten Liste).</li>
+                    <li><strong>Schritt 3: Stichprobenverfahren wählen und begründen.</strong> Wie wählt ihr aus der operationalen GG eure Stichprobe aus? Zufällig? Bewusst? Gelegenheitsstichprobe? Diskutiert Vor- und Nachteile.</li>
+                    <li><strong>Schritt 4: Stichprobengröße festlegen.</strong> Wie viele Fälle braucht ihr (grobe Schätzung, bei Experimenten oft pro Zelle)? Begründet dies (z.B. mit Blick auf Vergleichsgruppen, angestrebte statistische Aussagekraft - Poweranalyse ist hier nicht zwingend erforderlich, aber die Überlegung zählt).</li>
+                    <li><strong>Schritt 5: Realisierte Stichprobe antizipieren.</strong> Wer wird am Ende wahrscheinlich teilnehmen? Wie gut repräsentiert diese Stichprobe eure operationale und theoretische GG? Wo liegen die Grenzen der Generalisierbarkeit?</li>
+                </ul>
+
+
+                 <h3>Stichprobenpläne für unterschiedliche Forschungsmethoden</h3>
+                 <p>Je nachdem, ob ihr eine Inhaltsanalyse, ein Experiment oder eine Befragung durchführt, unterscheiden sich die spezifischen Überlegungen zum Stichprobenplan erheblich:</p>
+
+                 <div class="method-specific-box">
+                     <h4>Inhaltsanalyse</h4>
+                     <ul>
+                         <li><strong>Was ist die Stichprobe?</strong> Hier besteht die Stichprobe nicht aus Personen, sondern aus <strong>Medieneinheiten</strong> (z.B. Zeitungsartikel, Social-Media-Posts, Fernsehsendungen, TikTok Videos, Reels, Szenen in Filmen).</li>
+                         <li><strong>Grundgesamtheit (GG):</strong> Das "Universum" aller relevanten Medieneinheiten. Die Definition muss zeitlich, räumlich und inhaltlich klar abgegrenzt sein (z.B. "alle Kommentare unter den Instagram-Posts des Tagesschau-Accounts im Zeitraum Januar bis März 2025", "alle Prime-Time-Nachrichtensendungen von ARD und ZDF im Jahr 2024").</li>
+                         <li><strong>Stichprobenverfahren:</strong>
+                             <ul>
+                                 <li><strong>Vollerhebung:</strong> Bei kleinen, überschaubaren Grundgesamtheiten möglich.</li>
+                                 <li><strong>Zufallsauswahl:</strong> Benötigt eine Liste aller Einheiten der GG (Sampling Frame). Möglich sind einfache Zufallsauswahl, geschichtete Zufallsauswahl (z.B. nach Medientyp, Zeitraum) oder Klumpenstichproben (z.B. zufällige Auswahl von Zeitungsausgaben, dann Analyse aller relevanter Artikel darin).</li>
+                                 <li><strong>Systematische Auswahl:</strong> Auswahl jeder k-ten Einheit aus einer Liste (z.B. jeder 10. Artikel).</li>
+                                 <li><strong>Bewusste Auswahl:</strong> Auswahl typischer Fälle, extremer Fälle oder nach theoretischer Relevanz (oft in qualitativer Inhaltsanalyse).</li>
+                             </ul>
+                         </li>
+                         <li><strong>Besonderheiten:</strong> Oft werden mehrstufige Verfahren angewendet (z.B. erst zufällige Auswahl von Tagen, dann Analyse aller relevanter Beiträge an diesen Tagen). Die Konstruktion des Sampling Frames (Liste der GG) kann eine Herausforderung sein.</li>
+                     </ul>
+                      <!-- Replaced Placeholder 2: Content Analysis Funnel -->
+                      <div class="visualization-container animated-on-scroll">
+                          <div class="visualization-title">Auswahlprozess Inhaltsanalyse (Beispiel)</div>
+                          <div class="content-analysis-funnel">
+                              <div class="funnel-stage stage-1 viz-element"><p>Universum (z.B. Alle Zeitungsartikel 2024)</p></div>
+                              <div class="funnel-stage stage-2 viz-element"><p>Eingrenzung (z.B. Thema 'Klima' + Zeitraum Q1)</p></div>
+                              <div class="funnel-stage stage-3 viz-element"><p>Sampling Frame (Liste aller relevanten Artikel)</p></div>
+                              <div class="funnel-stage stage-4 viz-element"><p>Gezogene Stichprobe (z.B. N=200 Artikel)</p></div>
+                          </div>
+                      </div>
+                 </div>
+
+                 <div class="method-specific-box">
+                     <h4>Experiment</h4>
+                     <ul>
+                         <li><strong>Was ist die Stichprobe?</strong> Hier geht es um die <strong>Teilnehmenden (Versuchspersonen)</strong>. Entscheidend ist aber nicht nur deren Auswahl, sondern vor allem die <strong>zufällige Zuweisung (Randomisierung)</strong> zu den verschiedenen experimentellen Bedingungen (Gruppen).</li>
+                         <li><strong>Grundgesamtheit (GG):</strong> Oft weniger scharf definiert als bei Befragungen. Das Ziel ist häufig nicht die Repräsentativität für eine breite Bevölkerung, sondern die Prüfung eines Kausalzusammenhangs unter kontrollierten Bedingungen (hohe <strong>interne Validität</strong>). Die GG ist oft implizit (z.B. "psychologisch normale Erwachsene") oder spezifisch (z.B. "Studierende der Kommunikationswissenschaft").</li>
+                         <li><strong>Stichprobenverfahren (Auswahl der Personen):</strong>
+                             <ul>
+                                 <li>Meist <strong>nicht-zufällig:</strong> Oft werden <strong>Gelegenheitsstichproben (Convenience Samples)</strong> verwendet (z.B. Studierende, die für Credits teilnehmen, Personen aus dem Bekanntenkreis, Rekrutierung über Online-Plattformen). Dies schränkt die <strong>externe Validität</strong> (Generalisierbarkeit) ein.</li>
+                                 <li>Homogenität wird oft angestrebt, um Störeinflüsse zu minimieren.</li>
+                             </ul>
+                         </li>
+                         <li><strong>Stichprobenverfahren (Zuweisung zu Bedingungen):</strong>
+                            <ul>
+                                <li><strong>Zwingend zufällig (Randomisierung):</strong> Das Kernprinzip des Experiments! Jede Person muss die gleiche Chance haben, jeder Bedingung zugewiesen zu werden. Dies stellt sicher, dass sich die Gruppen vor der Manipulation (im statistischen Mittel) nicht systematisch unterscheiden.</li>
+                                <li>Umsetzung: Münzwurf, Zufallszahlen, computergestützte Randomisierung (z.B. in SoSci Survey).</li>
+                            </ul>
+                         </li>
+                         <li><strong>Besonderheiten:</strong> Die Stichprobengröße muss pro Bedingung/Zelle ausreichend sein, um Effekte nachweisen zu können. Die Qualität der Randomisierung ist entscheidender als die Repräsentativität der Auswahl.</li>
+                     </ul>
+                     <!-- Replaced Placeholder 3: Experimental Design -->
+                     <div class="visualization-container animated-on-scroll">
+                         <div class="visualization-title">Experimentelles Design: Randomisierung</div>
+                         <div class="experiment-design-viz">
+                            <div class="participant-pool">
+                                <div class="label">Teilnehmerpool</div>
+                                <div class="pool-box viz-element">
+                                    <span style="font-size: 2em;">👥</span><br>(N Personen)
+                                </div>
+                            </div>
+                            <div class="randomization">
+                                <div class="label">Zufällige Zuweisung</div>
+                                <div class="arrow-symbol viz-element">➔</div>
+                                <div class="label">(Randomisierung)</div>
+                            </div>
+                            <div class="groups">
+                                <div class="group">
+                                     <div class="label">Gruppe 1</div>
+                                     <div class="group-box group-1 viz-element">(z.B. Kontrollgr.)</div>
+                                </div>
+                                <div class="group">
+                                    <div class="label">Gruppe 2</div>
+                                    <div class="group-box group-2 viz-element">(z.B. Exp.-Gruppe)</div>
+                                </div>
+                                <!-- Add more groups if needed -->
+                                <!-- <div class="group">
+                                    <div class="label">Gruppe 3</div>
+                                    <div class="group-box group-3 viz-element">(z.B. Exp.-Gruppe 2)</div>
+                                </div> -->
+                            </div>
+                         </div>
+                     </div>
+                 </div>
+
+                 <div class="method-specific-box">
+                     <h4>Befragung</h4>
+                     <ul>
+                         <li><strong>Was ist die Stichprobe?</strong> Die ausgewählten <strong>Personen</strong>, die befragt werden sollen.</li>
+                         <li><strong>Grundgesamtheit (GG):</strong> Die Population, über die Aussagen getroffen werden sollen (z.B. "Wahlberechtigte in Deutschland", "Nutzer von TikTok zwischen 16 und 24 Jahren", "Mitarbeitende der Firma X"). Die Definition muss sehr präzise sein.</li>
+                         <li><strong>Ziel:</strong> Oft ist hier eine hohe <strong>externe Validität</strong> (Generalisierbarkeit, Repräsentativität) erwünscht, insbesondere bei beschreibenden Studien.</li>
+                         <li><strong>Stichprobenverfahren:</strong>
+                             <ul>
+                                 <li><strong>Wahrscheinlichkeitsauswahlen (Zufallsstichproben):</strong> Jedes Element der GG hat eine bekannte, von Null verschiedene Chance, in die Stichprobe zu gelangen. Benötigen einen Sampling Frame.
+                                     <ul>
+                                         <li>Einfache Zufallsauswahl (Lottoprinzip).</li>
+                                         <li>Systematische Zufallsauswahl (jede k-te Person).</li>
+                                         <li>Geschichtete Zufallsauswahl (GG wird nach Merkmalen unterteilt, dann Zufallsauswahl pro Schicht -> verbessert Repräsentativität für diese Merkmale).</li>
+                                         <li>Klumpenstichprobe (zufällige Auswahl von Gruppen/Klumpen, dann Vollerhebung oder weitere Auswahl innerhalb der Klumpen).</li>
+                                     </ul>
+                                 </li>
+                                 <li><strong>Nicht-Wahrscheinlichkeitsauswahlen (Bewusste/Willkürliche Auswahlen):</strong> Auswahlwahrscheinlichkeit ist unbekannt. Generalisierung auf GG ist statistisch nicht zulässig, wird aber oft praktiziert (mit Vorsicht!).
+                                     <ul>
+                                         <li>Gelegenheitsstichprobe (Convenience Sampling): Auswahl leicht erreichbarer Personen (z.B. Passantenbefragung, Online-Umfrage ohne Kontrolle). Anfällig für Verzerrungen.</li>
+                                         <li>Quotenstichprobe: Versuch, die Zusammensetzung der Stichprobe nach bestimmten Merkmalen (z.B. Alter, Geschlecht) der GG nachzubilden. Auswahl innerhalb der Quoten erfolgt willkürlich durch Interviewer.</li>
+                                         <li>Schneeballverfahren: Teilnehmende rekrutieren weitere Teilnehmende (gut für schwer erreichbare Gruppen).</li>
+                                         <li>Bewusste Auswahl typischer Fälle / extremer Fälle.</li>
+                                     </ul>
+                                 </li>
+                             </ul>
+                         </li>
+                         <li><strong>Besonderheiten:</strong> Die Verfügbarkeit eines Sampling Frames ist entscheidend für echte Zufallsstichproben. Bei Online-Befragungen ist die GG oft schwer zu definieren ("alle Internetnutzer, die auf den Link klicken?"). Non-Response (Teilnahmeverweigerung) kann die Repräsentativität stark gefährden.</li>
+                     </ul>
+                      <!-- Replaced Placeholder 4: Survey Sampling Flowchart -->
+                      <div class="visualization-container animated-on-scroll">
+                           <div class="visualization-title">Überblick Befragungs-Samplingverfahren</div>
+                           <div class="survey-sampling-viz">
+                                <div class="flow-level level-1">
+                                    <div class="flow-node viz-element">Grundgesamtheit</div>
+                                    <span class="flow-connector viz-element">↓ Auswahlverfahren ↓</span>
+                                </div>
+                                <div class="flow-level level-2">
+                                     <div class="branch branch-probability">
+                                         <div class="flow-node main-branch viz-element">Wahrscheinlichkeitsauswahl</div>
+                                         <span class="flow-connector viz-element">↓ Beispiele ↓</span>
+                                         <div class="flow-level level-3">
+                                              <div class="flow-node viz-element">Einfacher Zufall</div>
+                                              <div class="flow-node viz-element">Geschichtet</div>
+                                              <div class="flow-node viz-element">Klumpen</div>
+                                         </div>
+                                     </div>
+                                      <div class="branch branch-nonprobability">
+                                         <div class="flow-node main-branch viz-element">Nicht-Wahrscheinlichkeitsauswahl</div>
+                                          <span class="flow-connector viz-element">↓ Beispiele ↓</span>
+                                         <div class="flow-level level-3">
+                                              <div class="flow-node viz-element">Gelegenheit</div>
+                                              <div class="flow-node viz-element">Quote</div>
+                                              <div class="flow-node viz-element">Schneeball</div>
+                                         </div>
+                                     </div>
+                                </div>
+                           </div>
+                      </div>
+                 </div>
+
+
+                 <h3>Zufallsauswahl in der Praxis</h3>
+                 <ul>
+                     <li><strong>Voraussetzung:</strong> Eine echte Zufallsauswahl benötigt ein vollständiges Verzeichnis aller Elemente der operationalen Grundgesamtheit (Sampling Frame), aus dem zufällig gezogen werden kann (z.B. Liste aller Studierenden, Liste aller Artikel). Dies ist oft nicht vorhanden!</li>
+                     <li><strong>Alternativen zur echten Zufallsstichprobe:</strong> Wenn kein Sampling Frame existiert, müsst ihr auf andere Verfahren ausweichen (z.B. Quotenstichprobe, Schneeballverfahren, Convenience Sampling). Seid euch der jeweiligen Limitationen bewusst und diskutiert sie.</li>
+                     <li><strong>Werkzeuge für Zufall:</strong> Wenn ihr eine Liste habt oder eine Zufallszuweisung braucht: Tools wie <code>www.random.org</code> können Zufallszahlen, randomisierte Sequenzen oder Listenreihenfolgen generieren. Umfragetools wie SoSci Survey haben eingebaute Randomisierungsfunktionen.</li>
+                 </ul>
+
+                <h3>Sonderfall: Befragung von Minderjährigen</h3>
+                <p>Die Einbeziehung Minderjähriger in Befragungen ist rechtlich und ethisch komplex, insbesondere bei unter 14-Jährigen, wo die Einsichtsfähigkeit oft nicht gegeben ist und die Zustimmung der Erziehungsberechtigten zentral wird. <strong>Für die meisten studentischen Projekte ist es ratsam und deutlich einfacher, die Grundgesamtheit auf volljährige Personen (ab 18 Jahren) zu beschränken</strong>, es sei denn, das Forschungsthema macht die Befragung Minderjähriger zwingend erforderlich. Konsultiert bei Bedarf die ADM-Richtlinien und sprecht das Vorgehen genau ab.</p>
+
+                <h3>Weitere Ressourcen</h3>
+                 <ul>
+                    <li>Foliensätze zur Stichprobenziehung und Inhaltsanalyse (VL Trepte).</li>
+                    <li>Eure Grundlagenliteratur zur Methodenlehre (z.B. Rössler, Brosius, Scholl, Döring & Bortz).</li>
+                 </ul>
+
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© Andreas Reich, Universität Hohenheim, Sommersemester 2025</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Intersection Observer Setup ---
+            const animatedElements = document.querySelectorAll('.animated-on-scroll, .sampling-flow-container .stage, .sampling-flow-container .process-step, .visualization-container .viz-element, .survey-sampling-viz .flow-node, .survey-sampling-viz .flow-connector, .gg-to-sample-viz .viz-element, .experiment-design-viz .viz-element, .content-analysis-funnel .viz-element');
+
+            const observerOptions = {
+                root: null, // relative to viewport
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            };
+
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Animate only once
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+            animatedElements.forEach(el => {
+                 // Ensure elements within containers are observed directly if they have specific animations
+                 if (el.classList.contains('viz-element') || el.classList.contains('flow-node') || el.classList.contains('flow-connector') || el.matches('.sampling-flow-container .stage') || el.matches('.sampling-flow-container .process-step')) {
+                      observer.observe(el);
+                 }
+                 // Observe top-level containers/elements marked with animated-on-scroll
+                 else if (el.classList.contains('animated-on-scroll')) {
+                      observer.observe(el);
+                 }
+            });
+
+             // --- Specific Logic for Complex Animations (if needed) ---
+             // Example: If staggering needs JS control beyond CSS delays, add it here.
+             // For now, CSS handles the delays based on the 'is-visible' class.
+
+        });
+    </script>
+
+</body>
+</html>
